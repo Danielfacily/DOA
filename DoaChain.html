@@ -1,0 +1,1128 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DoaChain - Plataforma de Doações Blockchain</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #6a11cb;
+            --secondary: #2575fc;
+            --accent: #00f2c3;
+            --dark: #0f0c29;
+            --darker: #080616;
+            --light: #f8f9fa;
+            --card-bg: rgba(15, 12, 41, 0.7);
+            --card-border: rgba(106, 17, 203, 0.3);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(to bottom, var(--darker), var(--dark));
+            color: var(--light);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        /* Header */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            border-bottom: 1px solid var(--card-border);
+            margin-bottom: 30px;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.8rem;
+            font-weight: bold;
+            background: linear-gradient(to right, var(--accent), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .logo i {
+            font-size: 2rem;
+        }
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 30px;
+        }
+        
+        nav a {
+            color: var(--light);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 8px 15px;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+        }
+        
+        nav a:hover, nav a.active {
+            background: rgba(106, 17, 203, 0.3);
+            color: var(--accent);
+        }
+        
+        .user-actions {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .wallet-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(37, 117, 252, 0.2);
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+        
+        .wallet-info i {
+            color: var(--accent);
+        }
+        
+        .user-profile {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        
+        /* Main Content */
+        .screen {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .screen.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            margin-bottom: 25px;
+        }
+        
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--card-border);
+        }
+        
+        .card-header h2 {
+            font-size: 1.4rem;
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .btn {
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(106, 17, 203, 0.4);
+        }
+        
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--primary);
+        }
+        
+        /* Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .stat-card i {
+            font-size: 2rem;
+            color: var(--accent);
+            margin-bottom: 15px;
+        }
+        
+        .stat-card h3 {
+            font-size: 1.8rem;
+            margin-bottom: 5px;
+        }
+        
+        .stat-card p {
+            color: #aaa;
+            font-size: 0.9rem;
+        }
+        
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        th {
+            text-align: left;
+            padding: 15px;
+            color: var(--accent);
+            font-weight: 500;
+            border-bottom: 1px solid var(--card-border);
+        }
+        
+        td {
+            padding: 15px;
+            border-bottom: 1px solid rgba(106, 17, 203, 0.1);
+        }
+        
+        tr:hover td {
+            background: rgba(106, 17, 203, 0.1);
+        }
+        
+        .status {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+        
+        .status.pending {
+            background: rgba(255, 193, 7, 0.2);
+            color: #ffc107;
+        }
+        
+        .status.approved {
+            background: rgba(40, 167, 69, 0.2);
+            color: #28a745;
+        }
+        
+        .status.rejected {
+            background: rgba(220, 53, 69, 0.2);
+            color: #dc3545;
+        }
+        
+        .crypto-hash {
+            font-family: monospace;
+            color: var(--accent);
+            font-size: 0.9rem;
+        }
+        
+        /* Alert Card */
+        .alert-card {
+            background: rgba(220, 53, 69, 0.15);
+            border: 1px solid rgba(220, 53, 69, 0.3);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(220, 53, 69, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(220, 53, 69, 0); }
+        }
+        
+        .alert-card h3 {
+            color: #ff6b6b;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        
+        /* Blockchain Explorer */
+        .explorer {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 15px;
+            padding: 25px;
+            margin-top: 30px;
+        }
+        
+        .block {
+            background: rgba(15, 12, 41, 0.9);
+            border: 1px solid var(--card-border);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .block::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 5px;
+            height: 100%;
+            background: linear-gradient(to bottom, var(--primary), var(--secondary));
+        }
+        
+        .block-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+        
+        .block-id {
+            font-weight: bold;
+            color: var(--accent);
+        }
+        
+        .transactions {
+            margin-top: 15px;
+        }
+        
+        .transaction {
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(106, 17, 203, 0.1);
+            font-size: 0.9rem;
+        }
+        
+        .transaction:last-child {
+            border-bottom: none;
+        }
+        
+        /* Formulários */
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--accent);
+        }
+        
+        input, textarea, select {
+            width: 100%;
+            padding: 12px 15px;
+            background: rgba(15, 12, 41, 0.5);
+            border: 1px solid var(--card-border);
+            border-radius: 10px;
+            color: var(--light);
+            font-size: 1rem;
+        }
+        
+        textarea {
+            min-height: 120px;
+        }
+        
+        /* Grid de cards */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+        }
+        
+        .donation-card, .need-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 15px;
+            padding: 20px;
+            transition: transform 0.3s ease;
+        }
+        
+        .donation-card:hover, .need-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent);
+        }
+        
+        .donation-card h3, .need-card h3 {
+            color: var(--accent);
+            margin-bottom: 15px;
+        }
+        
+        .donation-meta, .need-meta {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+        }
+        
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 30px 0;
+            margin-top: 50px;
+            border-top: 1px solid var(--card-border);
+            color: #aaa;
+            font-size: 0.9rem;
+        }
+        
+        /* Responsividade */
+        @media (max-width: 992px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+            
+            nav ul {
+                gap: 15px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            nav ul {
+                display: none;
+            }
+            
+            .logo span {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header>
+            <div class="logo">
+                <i class="fas fa-link"></i>
+                <span>DoaChain</span>
+            </div>
+            
+            <nav>
+                <ul>
+                    <li><a href="#" class="nav-link active" data-target="dashboard"><i class="fas fa-home"></i> Dashboard</a></li>
+                    <li><a href="#" class="nav-link" data-target="donations"><i class="fas fa-donate"></i> Doações</a></li>
+                    <li><a href="#" class="nav-link" data-target="needs"><i class="fas fa-hands-helping"></i> Necessidades</a></li>
+                    <li><a href="#" class="nav-link" data-target="alerts"><i class="fas fa-exclamation-triangle"></i> Alertas</a></li>
+                    <li><a href="#" class="nav-link" data-target="profile"><i class="fas fa-user"></i> Perfil</a></li>
+                    <li><a href="#" class="nav-link" data-target="ong-validation"><i class="fas fa-file-contract"></i> Validação ONGs</a></li>
+                    <li><a href="#" class="nav-link" data-target="explorer"><i class="fas fa-link"></i> Blockchain</a></li>
+                </ul>
+            </nav>
+            
+            <div class="user-actions">
+                <div class="wallet-info">
+                    <i class="fab fa-ethereum"></i>
+                    <span>0x1a2b...c3d4</span>
+                </div>
+                <div class="user-profile">
+                    <i class="fas fa-user"></i>
+                </div>
+            </div>
+        </header>
+        
+        <!-- Tela 1: Dashboard -->
+        <section id="dashboard" class="screen active">
+            <!-- Alert Banner -->
+            <div class="alert-card">
+                <h3><i class="fas fa-exclamation-circle"></i> Alerta de Desastre</h3>
+                <p>Terremoto de magnitude 6.5 atingiu a região de Porto Alegre. 50K pessoas afetadas.</p>
+                <button class="btn btn-outline" style="margin-top: 15px;">
+                    <i class="fas fa-hands-helping"></i> Ajudar Agora
+                </button>
+            </div>
+            
+            <!-- Stats -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <i class="fas fa-donate"></i>
+                    <h3>R$ 42.560</h3>
+                    <p>Total Doado</p>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-users"></i>
+                    <h3>128</h3>
+                    <p>Necessidades Atendidas</p>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-medal"></i>
+                    <h3>Nível Ouro</h3>
+                    <p>Reputação</p>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-link"></i>
+                    <h3>1.258</h3>
+                    <p>Transações Blockchain</p>
+                </div>
+            </div>
+            
+            <!-- Últimas Doações -->
+            <div class="card">
+                <div class="card-header">
+                    <h2><i class="fas fa-donate"></i> Últimas Doações</h2>
+                    <button class="btn"><i class="fas fa-plus"></i> Nova Doação</button>
+                </div>
+                
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Descrição</th>
+                            <th>Valor</th>
+                            <th>Status</th>
+                            <th>Hash Blockchain</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Alimentos para famílias carentes</td>
+                            <td>R$ 1.200,00</td>
+                            <td><span class="status approved">Aprovada</span></td>
+                            <td class="crypto-hash">0x4a5b6c...d7e8f9</td>
+                        </tr>
+                        <tr>
+                            <td>Medicamentos para hospital</td>
+                            <td>R$ 3.500,00</td>
+                            <td><span class="status approved">Aprovada</span></td>
+                            <td class="crypto-hash">0x9a8b7c...d6e5f4</td>
+                        </tr>
+                        <tr>
+                            <td>Recursos para vítimas de enchente</td>
+                            <td>R$ 5.000,00</td>
+                            <td><span class="status pending">Em Validação</span></td>
+                            <td class="crypto-hash">0x3b4c5d...e6f7a8</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Necessidades para Validação -->
+            <div class="card">
+                <div class="card-header">
+                    <h2><i class="fas fa-hands-helping"></i> Necessidades para Validação</h2>
+                </div>
+                
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Descrição</th>
+                            <th>Beneficiário</th>
+                            <th>Urgência</th>
+                            <th>Ação</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Roupas de inverno para comunidade</td>
+                            <td>ONG Aquece Corações</td>
+                            <td><span style="color: #ff6b6b;">Alta</span></td>
+                            <td><button class="btn-outline">Validar</button></td>
+                        </tr>
+                        <tr>
+                            <td>Material de construção para reforma</td>
+                            <td>Centro Comunitário Esperança</td>
+                            <td><span style="color: #ffc107;">Média</span></td>
+                            <td><button class="btn-outline">Validar</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+        
+        <!-- Tela 2: Doações -->
+        <section id="donations" class="screen">
+            <div class="card">
+                <div class="card-header">
+                    <h2><i class="fas fa-donate"></i> Minhas Doações</h2>
+                    <button class="btn"><i class="fas fa-plus"></i> Nova Doação</button>
+                </div>
+                
+                <div class="cards-grid">
+                    <div class="donation-card">
+                        <h3>Alimentos para famílias carentes</h3>
+                        <div class="donation-meta">
+                            <span><i class="fas fa-calendar"></i> 15/06/2023</span>
+                            <span class="status approved">Aprovada</span>
+                        </div>
+                        <p>Cesta básica para 50 famílias na região sul</p>
+                        <div class="donation-meta">
+                            <span><i class="fas fa-money-bill-wave"></i> R$ 1.200,00</span>
+                            <span class="crypto-hash">0x4a5b6c...d7e8f9</span>
+                        </div>
+                        <button class="btn-outline" style="width: 100%; margin-top: 15px;">
+                            <i class="fas fa-external-link-alt"></i> Ver na Blockchain
+                        </button>
+                    </div>
+                    
+                    <div class="donation-card">
+                        <h3>Medicamentos para hospital</h3>
+                        <div class="donation-meta">
+                            <span><i class="fas fa-calendar"></i> 10/06/2023</span>
+                            <span class="status approved">Aprovada</span>
+                        </div>
+                        <p>Remédios para tratamento de crianças</p>
+                        <div class="donation-meta">
+                            <span><i class="fas fa-money-bill-wave"></i> R$ 3.500,00</span>
+                            <span class="crypto-hash">0x9a8b7c...d6e5f4</span>
+                        </div>
+                        <button class="btn-outline" style="width: 100%; margin-top: 15px;">
+                            <i class="fas fa-external-link-alt"></i> Ver na Blockchain
+                        </button>
+                    </div>
+                    
+                    <div class="donation-card">
+                        <h3>Recursos para vítimas de enchente</h3>
+                        <div class="donation-meta">
+                            <span><i class="fas fa-calendar"></i> 05/06/2023</span>
+                            <span class="status pending">Em Validação</span>
+                        </div>
+                        <p>Auxílio para famílias desabrigadas</p>
+                        <div class="donation-meta">
+                            <span><i class="fas fa-money-bill-wave"></i> R$ 5.000,00</span>
+                            <span class="crypto-hash">0x3b4c5d...e6f7a8</span>
+                        </div>
+                        <button class="btn-outline" style="width: 100%; margin-top: 15px;">
+                            <i class="fas fa-external-link-alt"></i> Ver na Blockchain
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">
+                    <h2><i class="fas fa-plus-circle"></i> Nova Doação</h2>
+                </div>
+                
+                <form>
+                    <div class="form-group">
+                        <label for="donation-title">Título da Doação</label>
+                        <input type="text" id="donation-title" placeholder="Ex: Alimentos para comunidade">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="donation-value">Valor (R$)</label>
+                        <input type="number" id="donation-value" placeholder="0,00">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="donation-category">Categoria</label>
+                        <select id="donation-category">
+                            <option value="alimentos">Alimentos</option>
+                            <option value="medicamentos">Medicamentos</option>
+                            <option value="vestuario">Vestuário</option>
+                            <option value="educacao">Educação</option>
+                            <option value="outros">Outros</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="donation-description">Descrição</label>
+                        <textarea id="donation-description" placeholder="Descreva detalhes da doação..."></textarea>
+                    </div>
+                    
+                    <button class="btn"><i class="fas fa-link"></i> Registrar na Blockchain</button>
+                </form>
+            </div>
+        </section>
+        
+        <!-- Tela 3: Necessidades -->
+        <section id="needs" class="screen">
+            <div class="card">
+                <div class="card-header">
+                    <h2><i class="fas fa-hands-helping"></i> Necessidades Ativas</h2>
+                    <button class="btn"><i class="fas fa-plus"></i> Nova Necessidade</button>
+                </div>
+                
+                <div class="cards-grid">
+                    <div class="need-card">
+                        <h3>Roupas de inverno para comunidade</h3>
+                        <div class="need-meta">
+                            <span><i class="fas fa-user"></i> ONG Aquece Corações</span>
+                            <span style="color: #ff6b6b;"><i class="fas fa-exclamation-circle"></i> Alta</span>
+                        </div>
+                        <p>Coleta de roupas de frio para comunidades carentes durante o inverno</p>
+                        <div class="need-meta">
+                            <span><i class="fas fa-map-marker-alt"></i> Porto Alegre, RS</span>
+                            <span class="status pending">Validação</span>
+                        </div>
+                        <button class="btn-outline" style="width: 100%; margin-top: 15px;">
+                            <i class="fas fa-hand-holding-heart"></i> Contribuir
+                        </button>
+                    </div>
+                    
+                    <div class="need-card">
+                        <h3>Material de construção para reforma</h3>
+                        <div class="need-meta">
+                            <span><i class="fas fa-user"></i> Centro Comunitário Esperança</span>
+                            <span style="color: #ffc107;"><i class="fas fa-exclamation-circle"></i> Média</span>
+                        </div>
+                        <p>Reforma do telhado do centro comunitário após tempestade</p>
+                        <div class="need-meta">
+                            <span><i class="fas fa-map-marker-alt"></i> Florianópolis, SC</span>
+                            <span class="status approved">Validada</span>
+                        </div>
+                        <button class="btn-outline" style="width: 100%; margin-top: 15px;">
+                            <i class="fas fa-hand-holding-heart"></i> Contribuir
+                        </button>
+                    </div>
+                    
+                    <div class="need-card">
+                        <h3>Alimentos para creche</h3>
+                        <div class="need-meta">
+                            <span><i class="fas fa-user"></i> Creche Amor de Mãe</span>
+                            <span style="color: #28a745;"><i class="fas fa-exclamation-circle"></i> Baixa</span>
+                        </div>
+                        <p>Alimentação para 120 crianças durante 2 meses</p>
+                        <div class="need-meta">
+                            <span><i class="fas fa-map-marker-alt"></i> Curitiba, PR</span>
+                            <span class="status approved">Validada</span>
+                        </div>
+                        <button class="btn-outline" style="width: 100%; margin-top: 15px;">
+                            <i class="fas fa-hand-holding-heart"></i> Contribuir
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Tela 4: Alertas de Desastre -->
+        <section id="alerts" class="screen">
+            <div class="card">
+                <div class="card-header">
+                    <h2><i class="fas fa-exclamation-triangle"></i> Alertas de Desastre Ativos</h2>
+                </div>
+                
+                <div class="cards-grid">
+                    <div class="card">
+                        <h3 style="color: #ff6b6b; display: flex; align-items: center; gap: 10px; margin-bottom: 20px;">
+                            <i class="fas fa-fire"></i> Incêndio Florestal
+                        </h3>
+                        <p style="margin-bottom: 10px;"><i class="fas fa-map-marker-alt"></i> Chapada Diamantina - BA</p>
+                        <p style="margin-bottom: 15px;">Fogo descontrolado em área de preservação, ameaçando comunidades locais.</p>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 15px;">
+                            <span><i class="fas fa-users"></i> 5.200 pessoas afetadas</span>
+                            <span style="color: #ff6b6b;"><i class="fas fa-exclamation-circle"></i> Extrema</span>
+                        </div>
+                        <div style="display: flex; gap: 10px;">
+                            <button class="btn"><i class="fas fa-hands-helping"></i> Ajudar Agora</button>
+                            <button class="btn-outline">Ver Detalhes</button>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <h3 style="color: #ffc107; display: flex; align-items: center; gap: 10px; margin-bottom: 20px;">
+                            <i class="fas fa-water"></i> Enchente
+                        </h3>
+                        <p style="margin-bottom: 10px;"><i class="fas fa-map-marker-alt"></i> Santa Catarina - SC</p>
+                        <p style="margin-bottom: 15px;">Chuvas intensas causaram enchentes em várias cidades do estado.</p>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 15px;">
+                            <span><i class="fas fa-users"></i> 12.800 pessoas afetadas</span>
+                            <span style="color: #ff6b6b;"><i class="fas fa-exclamation-circle"></i> Alta</span>
+                        </div>
+                        <div style="display: flex; gap: 10px;">
+                            <button class="btn"><i class="fas fa-hands-helping"></i> Ajudar Agora</button>
+                            <button class="btn-outline">Ver Detalhes</button>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <h3 style="color: #28a745; display: flex; align-items: center; gap: 10px; margin-bottom: 20px;">
+                            <i class="fas fa-wind"></i> Tempestade
+                        </h3>
+                        <p style="margin-bottom: 10px;"><i class="fas fa-map-marker-alt"></i> Região Sul - PR</p>
+                        <p style="margin-bottom: 15px;">Tempestade com ventos fortes causa danos em várias cidades.</p>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 15px;">
+                            <span><i class="fas fa-users"></i> 3.500 pessoas afetadas</span>
+                            <span style="color: #ffc107;"><i class="fas fa-exclamation-circle"></i> Média</span>
+                        </div>
+                        <div style="display: flex; gap: 10px;">
+                            <button class="btn"><i class="fas fa-hands-helping"></i> Ajudar Agora</button>
+                            <button class="btn-outline">Ver Detalhes</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">
+                    <h2><i class="fas fa-history"></i> Histórico de Alertas</h2>
+                </div>
+                
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tipo</th>
+                            <th>Local</th>
+                            <th>Data</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><i class="fas fa-fire"></i> Incêndio</td>
+                            <td>Pantanal - MT</td>
+                            <td>10/05/2023</td>
+                            <td><span class="status approved">Resolvido</span></td>
+                        </tr>
+                        <tr>
+                            <td><i class="fas fa-flood"></i> Enchente</td>
+                            <td>Recife - PE</td>
+                            <td>28/04/2023</td>
+                            <td><span class="status approved">Resolvido</span></td>
+                        </tr>
+                        <tr>
+                            <td><i class="fas fa-volcano"></i> Deslizamento</td>
+                            <td>Angra dos Reis - RJ</td>
+                            <td>15/04/2023</td>
+                            <td><span class="status approved">Resolvido</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+        
+        <!-- Tela 5: Perfil do Usuário -->
+        <section id="profile" class="screen">
+            <div class="card">
+                <div class="card-header">
+                    <h2><i class="fas fa-user"></i> Meu Perfil</h2>
+                </div>
+                
+                <div style="display: flex; gap: 30px; margin-bottom: 30px;">
+                    <div style="flex: 1; text-align: center;">
+                        <div style="width: 120px; height: 120px; border-radius: 50%; 
+                            background: linear-gradient(to right, var(--primary), var(--secondary));
+                            display: flex; align-items: center; justify-content: center; margin: 0 auto 20px;">
+                            <i class="fas fa-user" style="font-size: 3rem;"></i>
+                        </div>
+                        <h3 style="margin-bottom: 5px;">Carlos Silva</h3>
+                        <p style="color: #aaa; margin-bottom: 20px;">doador@email.com</p>
+                        <div class="wallet-info" style="justify-content: center; margin-bottom: 20px;">
+                            <i class="fab fa-ethereum"></i>
+                            <span>0x1a2b...c3d4</span>
+                        </div>
+                        <button class="btn-outline"><i class="fas fa-qrcode"></i> Mostrar QR Code</button>
+                    </div>
+                    
+                    <div style="flex: 2;">
+                        <h3 style="color: var(--accent); margin-bottom: 20px;">Informações Pessoais</h3>
+                        
+                        <form>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+                                <div class="form-group">
+                                    <label for="first-name">Nome</label>
+                                    <input type="text" id="first-name" value="Carlos">
+                                </div>
+                                <div class="form-group">
+                                    <label for="last-name">Sobrenome</label>
+                                    <input type="text" id="last-name" value="Silva">
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="email">Email</label>
+                                <input type="email" id="email" value="doador@email.com">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="phone">Telefone</label>
+                                <input type="tel" id="phone" value="(51) 99999-9999">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="address">Endereço</label>
+                                <input type="text" id="address" value="Av. Protásio Alves, 123 - Porto Alegre/RS">
+                            </div>
+                            
+                            <button class="btn"><i class="fas fa-save"></i> Salvar Alterações</button>
+                        </form>
+                    </div>
+                </div>
+                
+                <div class="card" style="margin-top: 30px;">
+                    <div class="card-header">
+                        <h2><i class="fas fa-medal"></i> Minha Reputação</h2>
+                    </div>
+                    
+                    <div style="text-align: center; padding: 20px 0;">
+                        <div style="position: relative; width: 200px; height: 200px; margin: 0 auto 20px;">
+                            <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
+                                background: conic-gradient(#ffc107 0% 85%, rgba(255, 193, 7, 0.2) 85% 100%); 
+                                border-radius: 50%;"></div>
+                            <div style="position: absolute; top: 10px; left: 10px; width: 180px; height: 180px; 
+                                background: var(--dark); border-radius: 50%; display: flex; flex-direction: column; 
+                                justify-content: center; align-items: center;">
+                                <span style="font-size: 2.5rem; font-weight: bold; color: #ffc107;">85%</span>
+                                <span style="color: #ffc107; font-size: 1.2rem;">Nível Ouro</span>
+                            </div>
+                        </div>
+                        <p style="color: #aaa; margin-bottom: 20px; max-width: 600px; margin: 0 auto 30px;">
+                            Sua reputação está entre as 15% melhores da plataforma. Continue ajudando para alcançar o nível Diamante!
+                        </p>
+                        
+                        <div style="display: flex; justify-content: center; gap: 15px;">
+                            <button class="btn"><i class="fas fa-history"></i> Histórico</button>
+                            <button class="btn"><i class="fas fa-share-alt"></i> Compartilhar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Tela 6: Validação de ONGs -->
+        <section id="ong-validation" class="screen">
+            <div class="card">
+                <div class="card-header">
+                    <h2><i class="fas fa-file-contract"></i> Validação de ONGs</h2>
+                </div>
+                
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ONG</th>
+                            <th>CNPJ</th>
+                            <th>Documentos</th>
+                            <th>Status</th>
+                            <th>Ação</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>ONG Aquece Corações</td>
+                            <td>12.345.678/0001-99</td>
+                            <td><a href="#" style="color: var(--accent);">Ver Documentos</a></td>
+                            <td><span class="status pending">Pendente</span></td>
+                            <td>
+                                <button class="btn-outline" style="margin-right: 5px;">Aprovar</button>
+                                <button class="btn-outline">Recusar</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Instituto Esperança</td>
+                            <td>98.765.432/0001-11</td>
+                            <td><a href="#" style="color: var(--accent);">Ver Documentos</a></td>
+                            <td><span class="status pending">Pendente</span></td>
+                            <td>
+                                <button class="btn-outline" style="margin-right: 5px;">Aprovar</button>
+                                <button class="btn-outline">Recusar</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Associação Solidária</td>
+                            <td>55.444.333/0001-22</td>
+                            <td><a href="#" style="color: var(--accent);">Ver Documentos</a></td>
+                            <td><span class="status approved">Aprovada</span></td>
+                            <td>
+                                <button class="btn-outline">Detalhes</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">
+                    <h2><i class="fas fa-plus-circle"></i> Nova Validação</h2>
+                </div>
+                
+                <form>
+                    <div class="form-group">
+                        <label for="ong-name">Nome da ONG</label>
+                        <input type="text" id="ong-name" placeholder="Ex: ONG Aquece Corações">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="ong-cnpj">CNPJ</label>
+                        <input type="text" id="ong-cnpj" placeholder="00.000.000/0000-00">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="ong-address">Endereço</label>
+                        <input type="text" id="ong-address" placeholder="Endereço completo">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="ong-docs">Documentos Comprobatórios</label>
+                        <input type="file" id="ong-docs" multiple>
+                        <p style="color: #aaa; font-size: 0.9rem; margin-top: 5px;">
+                            Envie documentos que comprovem a veracidade da ONG (CNPJ, estatuto, etc)
+                        </p>
+                    </div>
+                    
+                    <button class="btn"><i class="fas fa-paper-plane"></i> Enviar para Validação</button>
+                </form>
+            </div>
+        </section>
+        
+        <!-- Tela 7: Blockchain Explorer -->
+        <section id="explorer" class="screen">
+            <div class="card">
+                <div class="card-header">
+                    <h2><i class="fas fa-link"></i> Blockchain Explorer</h2>
+                    <div>
+                        <input type="text" placeholder="Buscar transação, bloco..." style="width: 300px;">
+                        <button class="btn" style="margin-left: 10px;"><i class="fas fa-search"></i></button>
+                    </div>
+                </div>
+                
+                <div class="block">
+                    <div class="block-header">
+                        <span class="block-id">Bloco #12458</span>
+                        <span>15 min atrás</span>
+                    </div>
+                    <p>Hash: <span class="crypto-hash">0x4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6</span></p>
+                    
+                    <div class="transactions">
+                        <div class="transaction">
+                            <p><i class="fas fa-exchange-alt" style="color: var(--accent);"></i> Transação: 
+                            <span class="crypto-hash">0x3b4c5d...e6f7a8</span></p>
+                            <p>Doação: R$ 1.200,00 para "Alimentos para famílias carentes"</p>
+                            <p><i class="fas fa-user"></i> De: 0x1a2b3c...d4e5f6</p>
+                            <p><i class="fas fa-hands-helping"></i> Para: ONG Aquece Corações (0x7f8e9d...c5b4a3)</p>
+                        </div>
+                        <div class="transaction">
+                            <p><i class="fas fa-exchange-alt" style="color: var(--accent);"></i> Transação: 
+                            <span class="crypto-hash">0x9a8b7c...d6e5f4</span></p>
+                            <p>Validação de necessidade: Roupas de inverno</p>
+                            <p><i class="fas fa-user"></i> Validador: Moderador #42 (0x3f4e5d...c2b1a0)</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="block">
+                    <div class="block-header">
+                        <span class="block-id">Bloco #12457</span>
+                        <span>32 min atrás</span>
+                    </div>
+                    <p>Hash: <span class="crypto-hash">0x1f2e3d4c5b6a7980a9b8c7d6e5f4a3b2c1d0e9f8a7b6c5d4e3f2a1b0c9d8e7f6</span></p>
+                    
+                    <div class="transactions">
+                        <div class="transaction">
+                            <p><i class="fas fa-exchange-alt" style="color: var(--accent);"></i> Transação: 
+                            <span class="crypto-hash">0x5d6e7f...a9b0c1</span></p>
+                            <p>Doação: R$ 3.500,00 para "Medicamentos para hospital"</p>
+                            <p><i class="fas fa-user"></i> De: 0x1a2b3c...d4e5f6</p>
+                            <p><i class="fas fa-hands-helping"></i> Para: Hospital Santa Casa (0x8e9f0a...b1c2d3)</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="block">
+                    <div class="block-header">
+                        <span class="block-id">Bloco #12456</span>
+                        <span>1 hora atrás</span>
+                    </div>
+                    <p>Hash: <span class="crypto-hash">0x9a0b8c7d6e5f4a3b2c1d0e9f8a7b6c5d4e3f2a1b0c9d8e7f61f2e3d4c5b6a798</span></p>
+                    
+                    <div class="transactions">
+                        <div class="transaction">
+                            <p><i class="fas fa-exchange-alt" style="color: var(--accent);"></i> Transação: 
+                            <span class="crypto-hash">0x3a4b5c...d7e8f9</span></p>
+                            <p>Registro de nova ONG: Instituto Esperança</p>
+                            <p><i class="fas fa-user"></i> Validador: Moderador #37 (0x5e6f7a...b9c8d7)</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="text-align: center; margin-top: 30px;">
+                    <button class="btn-outline"><i class="fas fa-history"></i> Carregar Mais Blocos</button>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Footer -->
+        <footer>
+            <p>DoaChain - Plataforma de Doações Transparentes com Blockchain</p>
+            <p>© 2023 Todos os direitos reservados | Conectado à rede Ethereum</p>
+        </footer>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Navegação entre telas
+            const navLinks = document.querySelectorAll('.nav-link');
+            const screens = document.querySelectorAll('.screen');
+            
+            navLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    // Remove classe ativa de todos os links
+                    navLinks.forEach(l => l.classList.remove('active'));
+                    
+                    // Adiciona classe ativa ao link clicado
+                    this.classList.add('active');
+                    
+                    // Oculta todas as telas
+                    screens.forEach(screen => screen.classList.remove('active'));
+                    
+                    // Mostra a tela correspondente
+                    const target = this.getAttribute('data-target');
+                    document.getElementById(target).classList.add('active');
+                });
+            });
+            
+            // Animação de cards
+            const cards = document.querySelectorAll('.card, .stat-card, .donation-card, .need-card');
+            cards.forEach((card, index) => {
+                setTimeout(() => {
+                    card.style.opacity = '0';
+                    card.style.transform = 'translateY(20px)';
+                    card.style.transition = 'opacity 0.5s, transform 0.5s';
+                    
+                    setTimeout(() => {
+                        card.style.opacity = '1';
+                        card.style.transform = 'translateY(0)';
+                    }, 100);
+                }, index * 100);
+            });
+        });
+    </script>
+</body>
+</html>
